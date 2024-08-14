@@ -10,6 +10,7 @@ const API_BASE_URL = "https://api.themoviedb.org/3";
 const MovieGrid = () => {
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(1); // Current page
+  const [selectedMovie, setSelectedMovie] = useState(null); // Selected movie
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -34,11 +35,23 @@ const MovieGrid = () => {
     if (page > 1) setPage((prevPage) => prevPage - 1); // Decrement page till 1
   };
 
+  const handleMovieClick = (movie) => {
+    setSelectedMovie(movie); // Set the selected movie
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedMovie(null); // Close the movie details
+  };
+
   return (
     <div>
       <div className="movie-grid">
         {movies.map((movie) => (
-          <div key={movie.id} className="movie-card">
+          <div
+            key={movie.id}
+            className="movie-card"
+            onClick={() => handleMovieClick(movie)} // Add click handler
+          >
             <img
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title}
@@ -63,6 +76,21 @@ const MovieGrid = () => {
           Next
         </Button>
       </div>
+      {selectedMovie && (
+        <div className="movie-details">
+          <Button className="close-button" onClick={handleCloseDetails}>
+            Close
+          </Button>
+          <h2>{selectedMovie.title}</h2>
+          <p>{selectedMovie.overview}</p>
+          <img
+            src={`https://image.tmdb.org/t/p/w500${selectedMovie.backdrop_path}`}
+            alt={selectedMovie.title}
+          />
+          <p>Release Date: {selectedMovie.release_date}</p>
+          <p>Rating: {selectedMovie.vote_average}</p>
+        </div>
+      )}
     </div>
   );
 };
